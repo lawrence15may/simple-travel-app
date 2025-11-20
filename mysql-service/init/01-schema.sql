@@ -1,0 +1,38 @@
+CREATE DATABASE IF NOT EXISTS travel;
+USE travel;
+
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(150),
+  password VARCHAR(150)
+);
+
+CREATE TABLE IF NOT EXISTS search_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(50),
+  title VARCHAR(200),
+  location VARCHAR(100),
+  price DECIMAL(10,2)
+);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  item_id BIGINT,
+  status VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  booking_id BIGINT,
+  amount DECIMAL(10,2),
+  status VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  message VARCHAR(500),
+  sent TINYINT(1) DEFAULT 0
+);

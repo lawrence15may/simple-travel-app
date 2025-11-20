@@ -1,0 +1,100 @@
+version: '3.8'
+services:
+  mysql-service:
+    image: mysql:8
+    container_name: mysql-service
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-service/init:/docker-entrypoint-initdb.d
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    depends_on:
+      - mysql-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/travel?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8081:8081"
+
+  search-service:
+    build: ./search-service
+    container_name: search-service
+    depends_on:
+      - mysql-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/travel?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8082:8082"
+
+  booking-service:
+    build: ./booking-service
+    container_name: booking-service
+    depends_on:
+      - mysql-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/travel?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8083:8083"
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    depends_on:
+      - mysql-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/travel?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8084:8084"
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    depends_on:
+      - mysql-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/travel?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8085:8085"
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    depends_on:
+      - user-service
+      - booking-service
+      - search-service
+    ports:
+      - "8080:8080"
+    environment:
+      USER_URL: http://user-service:8081
+      BOOKING_URL: http://booking-service:8083
+      SEARCH_URL: http://search-service:8082
+
+  frontend-service:
+    build: ./frontend-service
+    container_name: frontend-service
+    depends_on:
+      - gateway-service
+    ports:
+      - "3000:80"
+    environment:
+      API_URL: http://gateway-service:8080/api
+
+volumes:
+  mysql_data:

@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Travel POC</title>
+</head>
+<body>
+  <h1>Travel POC Frontend</h1>
+  <div>
+    <h3>Get User</h3>
+    <input id="uid" placeholder="user id" value="1"/>
+    <button onclick="getUser()">Get User</button>
+    <pre id="userout"></pre>
+  </div>
+
+  <div>
+    <h3>Search</h3>
+    <input id="loc" placeholder="location" value="Goa"/>
+    <button onclick="search()">Search</button>
+    <pre id="searchout"></pre>
+  </div>
+
+<script>
+const API = window.API_URL || "http://localhost:8080/api";
+
+function getUser(){
+  const id = document.getElementById('uid').value;
+  fetch(API + '/users/' + id)
+    .then(r=>r.json())
+    .then(j => { document.getElementById('userout').innerText = JSON.stringify(j, null, 2); })
+    .catch(err => { document.getElementById('userout').innerText = err; });
+}
+
+function search(){
+  const loc = document.getElementById('loc').value;
+  fetch(API + '/search?location=' + encodeURIComponent(loc))
+    .then(r=>r.json())
+    .then(j => { document.getElementById('searchout').innerText = JSON.stringify(j, null, 2); })
+    .catch(err => { document.getElementById('searchout').innerText = err; });
+}
+</script>
+</body>
+</html>
