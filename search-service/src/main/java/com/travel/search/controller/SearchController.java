@@ -4,6 +4,9 @@ import com.travel.search.model.SearchItem;
 import com.travel.search.repo.SearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 import java.util.List;
 
@@ -13,6 +16,11 @@ public class SearchController {
 
   @Autowired
   private SearchRepository repo;
+
+  @GetMapping("/health")
+    public String health() {
+        return "OK";
+  }
 
   @GetMapping
   public List<SearchItem> search(@RequestParam(required = false) String location) {

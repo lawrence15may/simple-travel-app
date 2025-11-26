@@ -12,8 +12,4 @@ public class GatewayServiceApplication {
     SpringApplication.run(GatewayServiceApplication.class, args);
   }
 
-  @Bean
-  public RestTemplate restTemplate() {
-    return new RestTemplate();
-  }
 }

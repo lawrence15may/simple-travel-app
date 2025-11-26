@@ -4,6 +4,8 @@ import com.travel.payment.model.Payment;
 import com.travel.payment.repo.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -13,6 +15,11 @@ public class PaymentController {
 
   @Autowired
   private PaymentRepository repo;
+
+  @GetMapping("/health")
+    public String health() {
+        return "OK";
+  }
 
   @GetMapping
   public List<Payment> all() {
