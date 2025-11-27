@@ -21,6 +21,12 @@ public class GatewayController {
     return rest.getForObject(url, Object.class);
   }
 
+  @GetMapping("/users/first5")
+  public Object firstFiveUsers() {
+    String url = USER_URL + "/users/first5";
+    return rest.getForObject(url, Object.class);
+  }
+
   @GetMapping("/users/{id}/bookings")
   public Object userBookings(@PathVariable Long id){
     String url = BOOKING_URL + "/bookings/user/" + id;

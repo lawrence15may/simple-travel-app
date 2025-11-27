@@ -4,8 +4,6 @@ import com.travel.user.model.User;
 import com.travel.user.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -17,8 +15,8 @@ public class UserController {
   private UserRepository repo;
 
   @GetMapping("/health")
-    public String health() {
-        return "OK";
+  public String health() {
+      return "OK";
   }
 
   @GetMapping
@@ -35,4 +33,11 @@ public class UserController {
   public User create(@RequestBody User user) {
     return repo.save(user);
   }
+
+  // NEW ENDPOINT — return top 5 users
+  @GetMapping("/first5")
+  public List<User> firstFive() {
+    return repo.findTop5ByOrderByIdAsc();
+  }
 }
+
