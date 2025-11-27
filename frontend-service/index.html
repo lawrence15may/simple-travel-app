@@ -1,43 +1,156 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <title>Travel POC</title>
-</head>
-<body>
-  <h1>Travel POC Frontend</h1>
-  <div>
-    <h3>Get User</h3>
-    <input id="uid" placeholder="user id" value="1"/>
-    <button onclick="getUser()">Get User</button>
-    <pre id="userout"></pre>
-  </div>
+<meta charset="utf-8"/>
+<title>Travel App Frontend</title>
 
-  <div>
-    <h3>Search</h3>
-    <input id="loc" placeholder="location" value="Goa"/>
-    <button onclick="search()">Search</button>
-    <pre id="searchout"></pre>
-  </div>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: #f0f4ff;
+    font-family: Arial, sans-serif;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    background: #4A90E2;
+    color: white;
+    padding: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    border-bottom: 4px solid #2f75c9;
+}
+
+/* PoC Icon */
+.poc-box {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    padding: 10px 15px;
+    border: 2px solid black;
+    border-radius: 8px;
+    background: white;
+    font-weight: bold;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 130px;
+    left: 20px;
+    width: 150px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 2px solid #4a90e2;
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.sidebar button:hover {
+    background: #4a90e2;
+    color: white;
+}
+
+/* Main content */
+#content-area {
+    margin-left: 260px;
+    margin-top: 60px;
+}
+
+/* User panel */
+.user-box {
+    width: 75%;
+    height: 320px;
+    background: white;
+    border: 2px solid #4a90e2;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 18px;
+}
+
+/* Bottom buttons */
+.bottom-buttons {
+    margin-top: 30px;
+}
+
+.bottom-buttons button {
+    padding: 12px 22px;
+    margin-right: 25px;
+    background: white;
+    border: 2px solid #4a90e2;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.bottom-buttons button:hover {
+    background: #4a90e2;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="poc-box">PoC</div>
+<div class="header">Travel App Frontend</div>
+
+<div class="sidebar">
+    <button onclick="loadUserPage()">User</button>
+    <button>Search</button>
+    <button>Booking</button>
+    <button>Payment</button>
+    <button>Notification</button>
+</div>
+
+<div id="content-area">
+    <!-- Initially empty -->
+</div>
 
 <script>
 const API = window.API_URL || "http://localhost:8080/api";
 
-function getUser(){
-  const id = document.getElementById('uid').value;
-  fetch(API + '/users/' + id)
-    .then(r=>r.json())
-    .then(j => { document.getElementById('userout').innerText = JSON.stringify(j, null, 2); })
-    .catch(err => { document.getElementById('userout').innerText = err; });
+/* Load User Page */
+function loadUserPage() {
+    document.getElementById("content-area").innerHTML = `
+        <div class="user-box" id="user-panel">
+            Fetching the first 5 users details from Database...
+        </div>
+
+        <div class="bottom-buttons">
+            <button onclick="searchUser()">Search Button</button>
+            <button onclick="addUser()">Add Button</button>
+            <button onclick="deleteUsers()">Delete Users Button</button>
+        </div>
+    `;
+
+    fetch(API + "/users/first5")
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("user-panel").innerHTML =
+                "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+        })
+        .catch(() => {
+            document.getElementById("user-panel").innerHTML =
+                "Error fetching data.";
+        });
 }
 
-function search(){
-  const loc = document.getElementById('loc').value;
-  fetch(API + '/search?location=' + encodeURIComponent(loc))
-    .then(r=>r.json())
-    .then(j => { document.getElementById('searchout').innerText = JSON.stringify(j, null, 2); })
-    .catch(err => { document.getElementById('searchout').innerText = err; });
-}
+/* Empty placeholders for future functions */
+function searchUser() { alert("Search Function pending..."); }
+function addUser() { alert("Add Function pending..."); }
+function deleteUsers() { alert("Delete Function pending..."); }
+
 </script>
+
 </body>
 </html>
+
