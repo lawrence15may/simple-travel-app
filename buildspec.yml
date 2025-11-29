@@ -1,0 +1,51 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+      - REGION=us-east-1
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+      - echo ACCOUNT_ID=$ACCOUNT_ID
+      - echo REGION=$REGION
+
+  build:
+    commands:
+      - echo Build started on `date`
+
+      # Build and tag each microservice
+      - for SERVICE in user-service search-service booking-service payment-service notification-service gateway-service frontend-service mysql-service; do
+          echo "Building $SERVICE...";
+          cd $SERVICE;
+          docker build -t $SERVICE:latest .;
+          docker tag $SERVICE:latest $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$SERVICE:latest;
+          cd ..;
+        done
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+      # Push images
+      - for SERVICE in user-service search-service booking-service payment-service notification-service gateway-service frontend-service mysql-service; do
+          echo "Pushing $SERVICE...";
+          docker push $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$SERVICE:latest;
+        done
+
+      # Prepare imagedefinitions.json for ECS deployments
+      - printf '[' > imagedefinitions.json
+      - COUNT=0
+      - SERVICES=(user-service search-service booking-service payment-service notification-service gateway-service frontend-service mysql-service)
+      - for SERVICE in "${SERVICES[@]}"; do
+          if [ $COUNT -gt 0 ]; then printf ', ' >> imagedefinitions.json; fi;
+          printf '{"name":"'$SERVICE'","imageUri":"'$ACCOUNT_ID'.dkr.ecr.'$REGION'.amazonaws.com/'$SERVICE':latest"}' >> imagedefinitions.json;
+          COUNT=$((COUNT+1));
+        done
+      - printf ']' >> imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
+
